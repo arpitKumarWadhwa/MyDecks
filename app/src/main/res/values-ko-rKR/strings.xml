@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="action_copy">카피 데크</string>
+    <string name="action_delete">데크 삭제</string>
+    <string name="action_delete_all">모든 덱 삭제</string>
+    <string name="action_details">세부</string>
+    <string name="action_edit_deck_name">데크 이름 편집</string>
+    <string name="action_filter_by_format">형식으로 필터링</string>
+    <string name="action_import_all_decks">모든 덱 가져 오기</string>
+    <string name="action_share">공유 갑판</string>
+    <string name="action_share_all_decks">모든 덱 공유</string>
+    <string name="action_switch_layout">갑판 목록 스타일 변경</string>
+    <string name="deck_already_exists">이 덱 목록은 이미 존재합니다. 여전히 삽입 하시겠습니까?</string>
+    <string name="deck_copy_failure">덱을 복사 할 수 없습니다.</string>
+    <string name="deck_copy_success">데크가 클립 보드에 복사 됨</string>
+    <string name="dialog_cancel">취소</string>
+    <string name="dialog_confirm">확인</string>
+    <string name="edit_deck_name_hint">새 데크 이름 입력</string>
+    <string name="generated_by_deck_box">에 의해 생성 된 Deck Box</string>
+    <string name="heroes">영웅 :</string>
+    <string name="intro">클립 보드에서 데크를 추가하여 시작하십시오.</string>
+    <string name="mana_curve">마나 곡선</string>
+    <string name="minions">미니언 :</string>
+    <string name="no">아니</string>
+    <string name="null_deck_name">갑판</string>
+    <string name="search_hint">덱 찾기...</string>
+    <string name="search_title">덱 찾기</string>
+    <string name="snack_bar_delete">1 갑판 삭제됨</string>
+    <string name="snack_bar_delete_all">삭제 된 모든 덱</string>
+    <string name="snack_bar_undo">끄르다</string>
+    <string name="spells">주문 :</string>
+    <string name="use_copied_deck_hint">이 덱을 사용하려면 클립 보드에 복사하고 Hearthstone에서 새 덱을 만드십시오.</string>
+    <string name="weapons">무기 :</string>
+    <string name="yes">예</string>
+    <string name="action_language">언어</string>
+    <string name="action_remove_from_favorites">즐겨 찾기에서 삭제하기</string>
+    <string name="action_add_to_favorites">즐겨 찾기에 추가</string>
+    <string name="added_to_favorites">즐겨 찾기에 추가됨</string>
+    <string name="removed_from_favorites">즐겨 찾기에서 삭제되었습니다.</string>
+</resources>

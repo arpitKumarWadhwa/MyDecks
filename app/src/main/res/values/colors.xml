@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#984d4d</color>
+    <color name="colorPrimaryDark">#784141</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorCommon">#969696</color>
+    <color name="colorRare">#264491</color>
+    <color name="colorEpic">#864787</color>
+    <color name="colorLegendary">#ffa505</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorBrown">#b44900</color>
+    <color name="colorYellow">#f9fa6a</color>
+    <color name="white">#ffffff</color>
+    <color name="warrior">#b63b3b</color>
+    <color name="warriorDark">#900909</color>
+    <color name="paladin">#ffba3f</color>
+    <color name="paladinDark">#e5a738</color>
+    <color name="hunter">#3b8d41</color>
+    <color name="hunterDark">#296a0d</color>
+    <color name="shaman">#3b17d8</color>
+    <color name="shamanDark">#0e1366</color>
+    <color name="rogue">#1A2B2B</color>
+    <color name="rogueDark">#142020</color>
+    <color name="warlock">#775676</color>
+    <color name="warlockDark">#4e394c</color>
+    <color name="priest">#d0d0ce</color>
+    <color name="priestDark">#bfbeb9</color>
+    <color name="mage">#accbf0</color>
+    <color name="mageDark">#b3b6ff</color>
+    <color name="druid">#ae601f</color>
+    <color name="druidDark">#894517</color>
+</resources>
