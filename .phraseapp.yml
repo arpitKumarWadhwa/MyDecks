@@ -1,0 +1,34 @@
+phraseapp:
+  access_token: 84197187618c74dabb2548dcbbced384437d0cb01e6c51fc1a8e9ca8f5ac6250
+  file_format: xml
+  project_id: 1977a330262570c90cc3553cf7fa65f3
+  pull:
+    targets:
+    - file: ./app/src/main/res/values/strings.xml
+      params: {locale_id: e23fb8b3d3b12fb1f160a5fb1f3397d6}
+    - file: ./app/src/main/res/values-ja-rJP/strings.xml
+      params: {locale_id: 02c66788ae9ecfb0eadd161a563ef55e}
+    - file: ./app/src/main/res/values-ko-rKR/strings.xml
+      params: {locale_id: 9b2e482bdcb182a9f11970bdc909e131}
+    - file: ./app/src/main/res/values-ko-rKR/strings.xml
+      params: {locale_id: 244a17a9bb15143accfa3f97f61d46d0}
+    - file: ./app/src/main/res/values-ru-rRU/strings.xml
+      params: {locale_id: 929ae783774c8e0dd94a5c949a12100a}
+    - file: ./app/src/main/res/values-zh-rCN/strings.xml
+      params: {locale_id: 9452c174ece253827de6c50cb8b63a9d}
+    - file: ./app/src/main/res/values/strings.xml
+      params: {locale_id: e23fb8b3d3b12fb1f160a5fb1f3397d6}
+    - file: ./app/src/main/res/values-ja-rJP/strings.xml
+      params: {locale_id: 02c66788ae9ecfb0eadd161a563ef55e}
+    - file: ./app/src/main/res/values-ko-rKR/strings.xml
+      params: {locale_id: 9b2e482bdcb182a9f11970bdc909e131}
+    - file: ./app/src/main/res/values-ko-rKR/strings.xml
+      params: {locale_id: 244a17a9bb15143accfa3f97f61d46d0}
+    - file: ./app/src/main/res/values-ru-rRU/strings.xml
+      params: {locale_id: 929ae783774c8e0dd94a5c949a12100a}
+    - file: ./app/src/main/res/values-zh-rCN/strings.xml
+      params: {locale_id: 9452c174ece253827de6c50cb8b63a9d}
+  push:
+    sources:
+    - file: ./app/src/main/res/values/strings.xml
+      params: {locale_id: e23fb8b3d3b12fb1f160a5fb1f3397d6}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="action_copy">复制甲板</string>
+    <string name="action_delete">删除甲板</string>
+    <string name="action_delete_all">删除所有套牌</string>
+    <string name="action_details">细节</string>
+    <string name="action_edit_deck_name">编辑甲板名称</string>
+    <string name="action_filter_by_format">按格式过滤</string>
+    <string name="action_import_all_decks">导入所有套牌</string>
+    <string name="action_share">分享甲板</string>
+    <string name="action_share_all_decks">分享所有甲板</string>
+    <string name="action_switch_layout">更改甲板列表样式</string>
+    <string name="deck_already_exists">这个甲板清单已经存在。你还想插入吗？</string>
+    <string name="deck_copy_failure">甲板无法复制</string>
+    <string name="deck_copy_success">甲板复制到剪贴板</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_confirm">确认</string>
+    <string name="edit_deck_name_hint">输入新的牌组名称</string>
+    <string name="generated_by_deck_box">由...生成 Deck Box</string>
+    <string name="heroes">英雄：</string>
+    <string name="intro">从剪贴板添加一个套牌开始</string>
+    <string name="mana_curve">法力曲线</string>
+    <string name="minions">喽罗：</string>
+    <string name="no">没有</string>
+    <string name="null_deck_name">甲板</string>
+    <string name="search_hint">寻找甲板...</string>
+    <string name="search_title">寻找甲板</string>
+    <string name="snack_bar_delete">1甲板已删除</string>
+    <string name="snack_bar_delete_all">所有甲板都被删除了</string>
+    <string name="snack_bar_undo">解开</string>
+    <string name="spells">法术：</string>
+    <string name="use_copied_deck_hint">要使用此套牌，请将其复制到剪贴板并在炉石中创建一个新牌组</string>
+    <string name="weapons">武器：</string>
+    <string name="yes">是</string>
+    <string name="action_language">语言</string>
+    <string name="removed_from_favorites">已从收藏夹中删除</string>
+    <string name="added_to_favorites">添加到收藏夹</string>
+    <string name="action_add_to_favorites">添加到收藏夹</string>
+    <string name="action_remove_from_favorites">从收藏夹中删除</string>
+</resources>

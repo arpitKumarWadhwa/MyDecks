@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="action_copy">Копировать колоду</string>
+    <string name="action_delete">Удалить колоду</string>
+    <string name="action_delete_all">Удалить все колоды</string>
+    <string name="action_details">подробности</string>
+    <string name="action_edit_deck_name">Изменить название колоды</string>
+    <string name="action_filter_by_format">Фильтровать по формату</string>
+    <string name="action_import_all_decks">Импортировать все колоды</string>
+    <string name="action_share">Поделиться колодой</string>
+    <string name="action_share_all_decks">Поделиться всеми колодами</string>
+    <string name="action_switch_layout">Изменить стиль списка колод</string>
+    <string name="deck_already_exists">Этот список колод уже существует. Вы все еще хотите вставить его?</string>
+    <string name="deck_copy_failure">Колода не может быть скопирована</string>
+    <string name="deck_copy_success">Палуба скопирована в буфер обмена</string>
+    <string name="dialog_cancel">отменить</string>
+    <string name="dialog_confirm">подтвердить</string>
+    <string name="edit_deck_name_hint">Введите название новой колоды</string>
+    <string name="generated_by_deck_box">Создано Deck Box</string>
+    <string name="heroes">Герои:</string>
+    <string name="intro">
+Начните с добавления колоды из буфера обмена</string>
+    <string name="mana_curve">Кривая маны</string>
+    <string name="minions">Миньоны:</string>
+    <string name="no">нет</string>
+    <string name="null_deck_name">колода</string>
+    <string name="search_hint">Найти колоды...</string>
+    <string name="search_title">Найти колоды</string>
+    <string name="snack_bar_delete">1 палуба удалена</string>
+    <string name="snack_bar_delete_all">Все колоды удалены</string>
+    <string name="snack_bar_undo">расстегивать</string>
+    <string name="spells">Заклинания:</string>
+    <string name="use_copied_deck_hint">Чтобы использовать эту колоду, скопируйте ее в буфер обмена и создайте новую колоду в Hearthstone.</string>
+    <string name="weapons">Оружие:</string>
+    <string name="yes">да</string>
+    <string name="action_language">язык</string>
+    <string name="action_add_to_favorites">Добавить в избранное</string>
+    <string name="action_remove_from_favorites">Удалить из Избранного</string>
+    <string name="added_to_favorites">Добавлено в избранное</string>
+    <string name="removed_from_favorites">Удалено из избранного</string>
+</resources>
