@@ -80,7 +80,7 @@ public class AlternateDeckListActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final View v = AlternateDeckListActivity.this.getLayoutInflater().inflate(R.layout.edit_deck_name_dialog, null);
 
-                final EditText editText = v.findViewById(R.id.new_name);
+                final EditText editText = v.findViewById(R.id.folder_name);
                 editText.setText(deckName);
                 editText.setSelection(0, editText.getText().toString().length());
 

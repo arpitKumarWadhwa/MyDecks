@@ -86,7 +86,7 @@ public final class DecksContract {
         public final static String TABLE_NAME = "decks";
 
         /**
-         * Unique ID number for the card (only for use in the database table).
+         * Unique ID number for the deck (only for use in the database table).
          * <p>
          * Type: INTEGER
          */
@@ -193,6 +193,13 @@ public final class DecksContract {
         * TYPE: INTEGER
          */
         public final static String COLUMN_DECK_COST = "deckCost";
+
+        /*Folder Name
+         *
+         * TYPE: String
+         * Is Unique?: Yes
+         */
+        public final static String FOLDER_NAME = "folderName";
 
         /**
          * Flag indicating whether the Deck is Favorite or not

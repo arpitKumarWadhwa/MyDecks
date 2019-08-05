@@ -11,7 +11,7 @@ public class DecksDbHelper extends SQLiteOpenHelper {
     /**
      * Database version. If you change the database schema, you must increment the database version.
      */
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private static final String DECKS_TABLE = "CREATE TABLE " + DecksContract.DecksEntry.TABLE_NAME + " ("
             + DecksContract.DecksEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -19,7 +19,8 @@ public class DecksDbHelper extends SQLiteOpenHelper {
             + DecksContract.DecksEntry.COLUMN_DECK_FORMAT + " TEXT, "
             + DecksContract.DecksEntry.COLUMN_DECK_CLASS + " TEXT, "
             + DecksContract.DecksEntry.COLUMN_DECK_NAME + " TEXT, "
-            + DecksContract.DecksEntry.IS_FAVORITE + " INTEGER DEFAULT 0);";
+            + DecksContract.DecksEntry.IS_FAVORITE + " INTEGER DEFAULT 0, "
+            + DecksContract.DecksEntry.FOLDER_NAME + " TEXT)";
 
     public DecksDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -39,6 +40,10 @@ public class DecksDbHelper extends SQLiteOpenHelper {
         if (oldVersion < 2) {
             db.execSQL("ALTER TABLE " + DecksContract.DecksEntry.TABLE_NAME
                     + " ADD COLUMN " + DecksContract.DecksEntry.IS_FAVORITE + " INTEGER DEFAULT 0");
+        }
+        if(oldVersion < 3){
+            db.execSQL("ALTER TABLE " + DecksContract.DecksEntry.TABLE_NAME
+                    + " ADD COLUMN " + DecksContract.DecksEntry.FOLDER_NAME + " TEXT");
         }
     }
 }

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="ok" translatable="false">OK</string>
+    <string name="cancel" translatable="false">CANCEL</string>
+    <string name="folder_name_hint" translatable="false">Folder Name</string>
+    <string name="all_decks" translatable="false">All Decks</string>
+    <string name="folders" translatable="false">Folders</string>
+    <string name="action_delete_folder" translatable="false">Delete</string>
+    <string name="action_add_to_folder" translatable="false">Add To Folder</string>
     <string name="action_copy">Copy Deck</string>
     <string name="action_delete">Delete Deck</string>
     <string name="action_delete_all">Delete All Decks</string>
@@ -50,6 +57,4 @@
     <string name="not_official_app" translatable="false">This not an official Hearthstone app</string>
     <string name="blizz_trademark" translatable="false">©2014 Blizzard Entertainment, Inc. All rights reserved. Heroes of Warcraft is a trademark, and Hearthstone is a registered trademark of Blizzard Entertainment, Inc. in the U.S. and/or other countries.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

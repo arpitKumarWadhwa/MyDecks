@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,14 +20,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -67,6 +71,12 @@ public class DeckBoxActivity extends AppCompatActivity {
     DecksAdapter adapter;
     DeckDecoder deckDecoder = new DeckDecoder();
     SearchView searchView;
+    TextView allDecks, folders;
+
+    public static final int VIEW_ALL_DECKS = 0;
+    public static final int VIEW_FOLDERS = 1;
+
+    public static int viewingMode = VIEW_ALL_DECKS;
 
     DeckListManager deletedDeck = new DeckListManager();
     ArrayList<DeckListManager> allDeletedDecks = new ArrayList<DeckListManager>();
@@ -85,6 +95,8 @@ public class DeckBoxActivity extends AppCompatActivity {
     static int filterIconPointer;
 
     ArrayList<Integer> favDecks = new ArrayList<>();
+
+    String folderName = "";
 
     //Handles the increment and cycling of filterIconPointer
     void incrementFilterIconPointer() {
@@ -143,6 +155,26 @@ public class DeckBoxActivity extends AppCompatActivity {
         setContentView(R.layout.activity_deck_box);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        allDecks = findViewById(R.id.all_decks);
+        folders = findViewById(R.id.folders);
+        allDecks.setVisibility(View.VISIBLE);
+        folders.setVisibility(View.VISIBLE);
+
+        //Check if all decks need to be displayed or only the decks in a folder needs to be displayed
+        Intent i = getIntent();
+        if (i.hasExtra("folderName")) {
+            folderName = i.getStringExtra("folderName");
+            if (folderName.length() > 20) {
+                toolbar.setTitle(folderName.substring(0, 20) + "..");
+            } else {
+                toolbar.setTitle(folderName);
+            }
+            //Set up the All Decks and Folder Tabs
+            viewingMode = VIEW_FOLDERS;
+            allDecks.setVisibility(View.GONE);
+            folders.setVisibility(View.GONE);
+        }
 
         String deletedDeckString = getIntent().getStringExtra("deletedDeckString");
         if (deletedDeckString != null) {
@@ -232,6 +264,37 @@ public class DeckBoxActivity extends AppCompatActivity {
                     }
                 } catch (Exception e) {
 
+                }
+            }
+        });
+
+        //Hook up all decks and folders button
+
+        allDecks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (viewingMode == VIEW_FOLDERS) {
+                    folders.setBackgroundColor(getResources().getColor(R.color.colorLightBrown));
+                    folders.setTypeface(null, Typeface.NORMAL);
+                    allDecks.setBackgroundColor(getResources().getColor(R.color.colorBrown));
+                    allDecks.setTypeface(null, Typeface.BOLD);
+                    viewingMode = VIEW_ALL_DECKS;
+                }
+            }
+        });
+
+        folders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (viewingMode == VIEW_ALL_DECKS) {
+                    allDecks.setBackgroundColor(getResources().getColor(R.color.colorLightBrown));
+                    allDecks.setTypeface(null, Typeface.NORMAL);
+                    folders.setBackgroundColor(getResources().getColor(R.color.colorBrown));
+                    folders.setTypeface(null, Typeface.BOLD);
+                    viewingMode = VIEW_FOLDERS;
+
+                    Intent i = new Intent(DeckBoxActivity.this, FoldersActivity.class);
+                    startActivity(i);
                 }
             }
         });
@@ -382,7 +445,7 @@ public class DeckBoxActivity extends AppCompatActivity {
 
             final View v = this.getLayoutInflater().inflate(R.layout.edit_deck_name_dialog, null);
 
-            final EditText editText = v.findViewById(R.id.new_name);
+            final EditText editText = v.findViewById(R.id.folder_name);
             editText.setText(adapter.getItem(position).getDeckName());
             editText.setSelection(0, editText.getText().toString().length());
 
@@ -618,6 +681,147 @@ public class DeckBoxActivity extends AppCompatActivity {
             deckBoxListView.setSelection(position);
 
             db.close();
+        } else if (id == R.id.action_add_to_folder) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            final int position = info.position;
+            View v = this.getLayoutInflater().inflate(R.layout.add_to_folder_dialog, null);
+            TextView cancelButton = v.findViewById(R.id.cancel_button);
+            TextView okButton = v.findViewById(R.id.ok_button);
+            final EditText folderNameEditText = v.findViewById(R.id.folder_name);
+            ListView existingFoldersListView = v.findViewById(R.id.existing_folders);
+
+            final ArrayList<String> existingFolders = new ArrayList<>();
+
+            //Get all the existing folders from the database
+            SQLiteDatabase database = mDbHelper.getReadableDatabase();
+            Cursor c = database.query(
+                    DecksContract.DecksEntry.TABLE_NAME,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+            while (c.moveToNext()) {
+                String folderNames = c.getString(c.getColumnIndex(DecksContract.DecksEntry.FOLDER_NAME));
+                if (folderNames != null) {
+                    ArrayList<String> folderNamesList = new ArrayList<>();
+                    folderNamesList.addAll(Arrays.asList(folderNames.split("`")));
+
+                    for (int i = 0; i < folderNamesList.size(); i++) {
+                        String folderName = folderNamesList.get(i);
+                        if (!existingFolders.contains(folderName)) {
+                            existingFolders.add(folderName);
+                        }
+                    }
+                }
+            }
+            c.close();
+            database.close();
+
+            ArrayAdapter<String> existingFoldersAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, existingFolders);
+
+            Log.e("size", String.valueOf(existingFolders.size()));
+            //set the height of the list view
+            if (existingFolders.size() > 0) {
+                int totalHeight = 0;
+                int desiredWidth = View.MeasureSpec.makeMeasureSpec(existingFoldersListView.getWidth(), View.MeasureSpec.AT_MOST);
+                for (int i = 0; i < existingFoldersAdapter.getCount(); i++) {
+                    View listItem = existingFoldersAdapter.getView(i, null, existingFoldersListView);
+                    listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                    totalHeight += listItem.getMeasuredHeight();
+                    if (i == 3) {
+                        break;
+                    }
+                }
+
+                ViewGroup.LayoutParams params = existingFoldersListView.getLayoutParams();
+                params.height = totalHeight / 2 + existingFoldersListView.getDividerHeight() * (existingFoldersAdapter.getCount());
+                existingFoldersListView.setLayoutParams(params);
+                existingFoldersListView.requestLayout();
+            }
+
+            existingFoldersListView.setAdapter(existingFoldersAdapter);
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(v);
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            okButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String folderName = folderNameEditText.getText().toString().trim();
+
+                    if (!TextUtils.isEmpty(folderName) && !folderName.contains("`")) {
+
+                        String selection = DecksContract.DecksEntry._ID + "=?";
+                        String[] selectionArgs = new String[]{String.valueOf(adapter.getItem(position).getId())};
+
+                        //Get all the folder in which this deck is saved
+                        SQLiteDatabase database = mDbHelper.getReadableDatabase();
+                        Cursor c = database.query(
+                                DecksContract.DecksEntry.TABLE_NAME,
+                                null,
+                                selection,
+                                selectionArgs,
+                                null,
+                                null,
+                                null
+                        );
+                        c.moveToFirst();
+                        String existingFolderNames = c.getString(c.getColumnIndex(DecksContract.DecksEntry.FOLDER_NAME));
+                        c.close();
+                        database.close();
+
+
+                        Log.e("new", folderName);
+                        //Save the deck in the folder
+                        database = mDbHelper.getWritableDatabase();
+
+                        ContentValues cv = new ContentValues();
+                        folderName += "`"; //Delimiter to separate different folders
+                        if(existingFolderNames != null) {
+                            Log.e("existsing: ",  existingFolderNames);
+                            existingFolderNames += folderName;
+                        }
+                        else{
+                            existingFolderNames = folderName;
+                        }
+                        cv.put(DecksContract.DecksEntry.FOLDER_NAME, existingFolderNames);
+
+                        database.update(
+                                DecksContract.DecksEntry.TABLE_NAME,
+                                cv,
+                                selection,
+                                selectionArgs
+                        );
+
+                        database.close();
+                    } else {
+                        //TODO: Show a Toast
+                    }
+                    dialog.hide();
+                }
+            });
+
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.hide();
+                }
+            });
+
+            existingFoldersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    String folderName = existingFolders.get(i);
+                    folderNameEditText.setText(folderName);
+                }
+            });
+
         }
         return super.onContextItemSelected(item);
     }
@@ -707,17 +911,116 @@ public class DeckBoxActivity extends AppCompatActivity {
                 format = "Favorites";
         }
 
-        String selection = DecksContract.DecksEntry.COLUMN_DECK_FORMAT + "=?";
-        String selectionArgs[];
+        String selection = DecksContract.DecksEntry._ID + "=?";
+        String selectionArgs[] = null;
 
         if (format.equals("All")) {
-            selectionArgs = null;
-            selection = null;
+            if (!TextUtils.isEmpty(folderName)) {
+                //Get the column ids of all decks which are stored in the selected folder
+                SQLiteDatabase folderDatabase = mDbHelper.getReadableDatabase();
+                Cursor c = folderDatabase.query(
+                        DecksContract.DecksEntry.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+
+                ArrayList<String> selectionArgsList = new ArrayList<>();
+                while (c.moveToNext()) {
+                    String foldersListString = c.getString(c.getColumnIndex(DecksContract.DecksEntry.FOLDER_NAME));
+                    ArrayList<String> foldersList = new ArrayList<>();
+                    if(foldersListString != null) {
+                        foldersList.addAll(Arrays.asList(foldersListString.split("`")));
+                    }
+                    if (foldersList.contains(folderName)) {
+                        int id = c.getInt(c.getColumnIndex(DecksContract.DecksEntry._ID));
+                        selection = selection + " OR " + DecksContract.DecksEntry._ID + "=?";
+                        selectionArgsList.add(String.valueOf(id));
+                    }
+                }
+                if (selectionArgsList.size() > 0) {
+                    selectionArgs = selectionArgsList.toArray(new String[0]);
+                }
+                c.close();
+            } else {
+                selectionArgs = null;
+                selection = null;
+            }
         } else if (format.equals("Favorites")) {
-            selection = DecksContract.DecksEntry.IS_FAVORITE + "=?";
-            selectionArgs = new String[]{String.valueOf(DecksContract.DecksEntry.FAVORITE)};
+            if (!TextUtils.isEmpty(folderName)) {
+                //Get the column ids of all decks which are stored in the selected folder
+                SQLiteDatabase folderDatabase = mDbHelper.getReadableDatabase();
+                Cursor c = folderDatabase.query(
+                        DecksContract.DecksEntry.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+
+                ArrayList<String> selectionArgsList = new ArrayList<>();
+                while (c.moveToNext()) {
+                    String foldersListString = c.getString(c.getColumnIndex(DecksContract.DecksEntry.FOLDER_NAME));
+                    ArrayList<String> foldersList = new ArrayList<>();
+                    if(foldersListString != null) {
+                        foldersList.addAll(Arrays.asList(foldersListString.split("`")));
+                    }
+                    int isFav = c.getInt(c.getColumnIndex(DecksContract.DecksEntry.IS_FAVORITE));
+                    if (foldersList.contains(folderName) && isFav == DecksContract.DecksEntry.FAVORITE) {
+                        int id = c.getInt(c.getColumnIndex(DecksContract.DecksEntry._ID));
+                        selection = selection + " OR " + DecksContract.DecksEntry._ID + "=?";
+                        selectionArgsList.add(String.valueOf(id));
+                    }
+                }
+                if (selectionArgsList.size() > 0) {
+                    selectionArgs = selectionArgsList.toArray(new String[0]);
+                }
+                c.close();
+            } else {
+                selection = DecksContract.DecksEntry.IS_FAVORITE + "=?";
+                selectionArgs = new String[]{String.valueOf(DecksContract.DecksEntry.FAVORITE)};
+            }
         } else {
-            selectionArgs = new String[]{format};
+            if (!TextUtils.isEmpty(folderName)) {
+                //Get the column ids of all decks which are stored in the selected folder
+                SQLiteDatabase folderDatabase = mDbHelper.getReadableDatabase();
+                Cursor c = folderDatabase.query(
+                        DecksContract.DecksEntry.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+
+                ArrayList<String> selectionArgsList = new ArrayList<>();
+                while (c.moveToNext()) {
+                    String foldersListString = c.getString(c.getColumnIndex(DecksContract.DecksEntry.FOLDER_NAME));
+                    String queriedFormat = c.getString(c.getColumnIndex(DecksContract.DecksEntry.COLUMN_DECK_FORMAT));
+                    ArrayList<String> foldersList = new ArrayList<>();
+                    if(foldersListString != null) {
+                        foldersList.addAll(Arrays.asList(foldersListString.split("`")));
+                    }
+                    if (foldersList.contains(folderName) && queriedFormat.equals(format)) {
+                        int id = c.getInt(c.getColumnIndex(DecksContract.DecksEntry._ID));
+                        selection = selection + " OR " + DecksContract.DecksEntry._ID + "=?";
+                        selectionArgsList.add(String.valueOf(id));
+                    }
+                }
+                if (selectionArgsList.size() > 0) {
+                    selectionArgs = selectionArgsList.toArray(new String[0]);
+                }
+                c.close();
+            } else {
+                selection = DecksContract.DecksEntry.COLUMN_DECK_FORMAT + "=?";
+                selectionArgs = new String[]{format};
+            }
         }
 
         Cursor c = db.query(
@@ -1203,6 +1506,24 @@ public class DeckBoxActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        viewingMode = VIEW_ALL_DECKS;
+
+        //Set up the All Decks and Folder Tabs
+        folders.setBackgroundColor(getResources().getColor(R.color.colorLightBrown));
+        folders.setTypeface(null, Typeface.NORMAL);
+        allDecks.setBackgroundColor(getResources().getColor(R.color.colorBrown));
+        allDecks.setTypeface(null, Typeface.BOLD);
+
+        if(folderName != null && !TextUtils.isEmpty(folderName)){
+            viewingMode = VIEW_FOLDERS;
+            //Set up the All Decks and Folder Tabs
+            allDecks.setBackgroundColor(getResources().getColor(R.color.colorLightBrown));
+            allDecks.setTypeface(null, Typeface.NORMAL);
+            folders.setBackgroundColor(getResources().getColor(R.color.colorBrown));
+            folders.setTypeface(null, Typeface.BOLD);
+        }
+
+
         if (searchString != null && !searchString.equals("")) {
             searchView.requestFocus();
             searchView.setQuery(searchString, false);

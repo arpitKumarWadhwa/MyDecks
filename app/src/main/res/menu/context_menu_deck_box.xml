@@ -37,4 +37,9 @@
         android:title="Convert to Standard"
         app:showAsAction="never"
         />
+    <item
+        android:id="@+id/action_add_to_folder"
+        android:orderInCategory="97"
+        android:title="@string/action_add_to_folder"
+        app:showAsAction="never"/>
 </menu>
