@@ -30,6 +30,7 @@ public class FoldersActivity extends AppCompatActivity {
     RecyclerView foldersRecycler;
     ArrayList<String> folders = new ArrayList<>();
     TextView allDecksTextView, foldersTextView;
+    final FolderAdapter folderAdapter = new FolderAdapter(folders, this);
     final DecksDbHelper mDbHelper = new DecksDbHelper(this);
 
     @Override
@@ -45,7 +46,6 @@ public class FoldersActivity extends AppCompatActivity {
         loadFolders();
 
         foldersRecycler = findViewById(R.id.folders_recycler);
-        final FolderAdapter folderAdapter = new FolderAdapter(folders, this);
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         foldersRecycler.setLayoutManager(staggeredGridLayoutManager);
         foldersRecycler.setAdapter(folderAdapter);
@@ -126,8 +126,6 @@ public class FoldersActivity extends AppCompatActivity {
                             loadFolders();
                             folderAdapter.notifyDataSetChanged();
 
-                            //Update the folders list
-
                             return true;
                         } else
                             return false;
@@ -206,6 +204,10 @@ public class FoldersActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        folders.clear();
+        loadFolders();
+        folderAdapter.notifyDataSetChanged();
 
         DeckBoxActivity.viewingMode = DeckBoxActivity.VIEW_FOLDERS;
         //Set up the All Decks and Folder Tabs

@@ -214,6 +214,9 @@ public class DeckBoxActivity extends AppCompatActivity {
                 i.putExtra("deckString", deckString);
                 i.putExtra("deckName", deck.getDeckName());
                 i.putExtra("playableClass", deck.getPlayableClass());
+                if(folderName != null && !TextUtils.isEmpty(folderName)){
+                    i.putExtra("folderName", folderName);
+                }
                 //Save the selected deck position in the list view so that it can be scrolled back to on return
                 selectedDeckPosition = position;
                 //Save the Search Query so that it can be restored on return
@@ -224,6 +227,12 @@ public class DeckBoxActivity extends AppCompatActivity {
 
         //Get the deck string from the clipboard
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        if(folderName != null && !TextUtils.isEmpty(folderName)){
+            fab.setVisibility(View.GONE);
+        }
+        else{
+            fab.setVisibility(View.VISIBLE);
+        }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -344,6 +353,14 @@ public class DeckBoxActivity extends AppCompatActivity {
                 }
             }
         });
+
+        MenuItem deleteAllItem = menu.findItem(R.id.action_delete_all);
+        MenuItem importAllItem = menu.findItem(R.id.action_import_all_decks);
+
+        if(folderName != null && !TextUtils.isEmpty(folderName)){
+            deleteAllItem.setVisible(false);
+            importAllItem.setVisible(false);
+        }
         return true;
     }
 
@@ -432,6 +449,13 @@ public class DeckBoxActivity extends AppCompatActivity {
         else
             item.setTitle(getString(R.string.action_add_to_favorites));
 
+        MenuItem folderItem = menu.findItem(R.id.action_add_to_folder);
+        MenuItem deleteItem = menu.findItem(R.id.action_delete);
+            if(folderName != null && !TextUtils.isEmpty(folderName)){
+                folderItem.setVisible(false);
+                deleteItem.setTitle("Remove from folder"); //TODO: Put this in strings.xml and translate
+            }
+
     }
 
     @Override
@@ -504,33 +528,96 @@ public class DeckBoxActivity extends AppCompatActivity {
         } else if (id == R.id.action_delete) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             final int position = info.position;
+            if(folderName != null && !TextUtils.isEmpty(folderName)){
+                //Get the deck id
+                int deletedDeckId = adapter.getItem(position).getId();
+                Log.e("deletedId", String.valueOf(deletedDeckId));
 
-            DecksDbHelper mDbHelper = new DecksDbHelper(this);
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                //Remove the folder from the deck
+                String selection = DecksContract.DecksEntry._ID + "=?";
+                String[] selectionArgs = new String[]{String.valueOf(deletedDeckId)};
 
-            String selection = DecksContract.DecksEntry._ID + "=?";
-            String selectionArgs[] = new String[]{String.valueOf(adapter.getItem(position).getId())};
+                SQLiteDatabase readDatabase = mDbHelper.getReadableDatabase();
 
-            deletedDeck = adapter.getItem(position);
+                Cursor c = readDatabase.query(
+                        DecksContract.DecksEntry.TABLE_NAME,
+                        null,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        null
+                );
+                c.moveToFirst();
 
-            int r = db.delete(
-                    DecksContract.DecksEntry.TABLE_NAME,
-                    selection,
-                    selectionArgs
-            );
+                String folderNamesString = c.getString(c.getColumnIndex(DecksContract.DecksEntry.FOLDER_NAME));
+                c.close(); readDatabase.close();
+                ArrayList<String> foldersList = new ArrayList<>();
+                foldersList.addAll(Arrays.asList(folderNamesString.split("`")));
 
-            //Log.e("Deleted: ", String.valueOf(r));
+                if(foldersList.contains(folderName)){
+                    foldersList.remove(folderName);
+                }
 
-            db.close();
-            adapter.clear();
-            decks = loadDecks(filterIconPointer);
-            adapter.addAll(decks);
-            adapter.notifyDataSetChanged();
+                StringBuilder newFolderStringBuilder = new StringBuilder();
+                String newFolderString = null;
+                for(int i=0; i<foldersList.size(); i++){
+                    newFolderStringBuilder.append(foldersList.get(i));
+                    newFolderStringBuilder.append("`");
+                }
+                if(foldersList.size() > 0){
+                    newFolderString = newFolderStringBuilder.toString();
+                }
 
-            Snackbar mySnackbar = Snackbar.make(findViewById(R.id.activity_deck_box),
-                    R.string.snack_bar_delete, Snackbar.LENGTH_LONG);
-            mySnackbar.setAction(R.string.snack_bar_undo, new MyUndoListener());
-            mySnackbar.show();
+                //Update the database
+                SQLiteDatabase writeDatabase = mDbHelper.getWritableDatabase();
+
+                ContentValues cv = new ContentValues();
+                cv.put(DecksContract.DecksEntry.FOLDER_NAME, newFolderString);
+                writeDatabase.update(
+                        DecksContract.DecksEntry.TABLE_NAME,
+                        cv,
+                        selection,
+                        selectionArgs
+                );
+                writeDatabase.close();
+
+                adapter.clear();
+                decks = loadDecks(filterIconPointer);
+                adapter.addAll(decks);
+                adapter.notifyDataSetChanged();
+
+            }
+            else {
+
+
+                DecksDbHelper mDbHelper = new DecksDbHelper(this);
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+                String selection = DecksContract.DecksEntry._ID + "=?";
+                String selectionArgs[] = new String[]{String.valueOf(adapter.getItem(position).getId())};
+
+                deletedDeck = adapter.getItem(position);
+
+                int r = db.delete(
+                        DecksContract.DecksEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+
+                //Log.e("Deleted: ", String.valueOf(r));
+
+                db.close();
+                adapter.clear();
+                decks = loadDecks(filterIconPointer);
+                adapter.addAll(decks);
+                adapter.notifyDataSetChanged();
+
+                Snackbar mySnackbar = Snackbar.make(findViewById(R.id.activity_deck_box),
+                        R.string.snack_bar_delete, Snackbar.LENGTH_LONG);
+                mySnackbar.setAction(R.string.snack_bar_undo, new MyUndoListener());
+                mySnackbar.show();
+            }
         } else if (id == R.id.action_share_deck) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             final int position = info.position;
@@ -801,7 +888,7 @@ public class DeckBoxActivity extends AppCompatActivity {
 
                         database.close();
                     } else {
-                        //TODO: Show a Toast
+                        Toast.makeText(DeckBoxActivity.this, "cannot use \"`\" in folder name", Toast.LENGTH_SHORT).show();
                     }
                     dialog.hide();
                 }
@@ -881,6 +968,7 @@ public class DeckBoxActivity extends AppCompatActivity {
 
         c.moveToLast();
         deck.setId(c.getInt(c.getColumnIndex(DecksContract.DecksEntry._ID)));
+        Log.e("insertId", String.valueOf(c.getInt(c.getColumnIndex(DecksContract.DecksEntry._ID))));
 
         c.close();
         db.close();

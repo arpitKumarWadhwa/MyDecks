@@ -15,6 +15,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +33,7 @@ import com.kumar.ak.arpit.mydecks.data.DecksDbHelper;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class AlternateDeckListActivity extends AppCompatActivity {
     int locale;
@@ -50,6 +52,9 @@ public class AlternateDeckListActivity extends AppCompatActivity {
     String deckCode, deckName, playableClass;
 
     String deletedDeckString;
+    DecksDbHelper mDbHelper = new DecksDbHelper(this);
+
+    String folderName = "";
 
     Toolbar toolbar;
 
@@ -63,10 +68,15 @@ public class AlternateDeckListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_alternate_deck_list);
         toolbar = (Toolbar) findViewById(R.id.deck_list_toolbar);
 
-        deckId = getIntent().getIntExtra("deckId", -1);
-        deckCode = getIntent().getStringExtra("deckString");
-        deckName = getIntent().getStringExtra("deckName");
-        playableClass = getIntent().getStringExtra("playableClass");
+        Intent intent = getIntent();
+        deckId = intent.getIntExtra("deckId", -1);
+        deckCode = intent.getStringExtra("deckString");
+        deckName = intent.getStringExtra("deckName");
+        playableClass = intent.getStringExtra("playableClass");
+
+        if (intent.hasExtra("folderName")) {
+            folderName = intent.getStringExtra("folderName");
+        }
 
         toolbar.setTitle("");
         final TextView toolbarTitle = findViewById(R.id.deck_list_title);
@@ -224,6 +234,11 @@ public class AlternateDeckListActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_deck_list, menu);
         MenuItem item = menu.findItem(R.id.action_favorites);
+
+        MenuItem deleteItem = menu.findItem(R.id.action_delete);
+        if (folderName != null && !TextUtils.isEmpty(folderName)) {
+            deleteItem.setTitle("Remove from folder"); //TODO: Put this in strings.xml and translate
+        }
         return true;
     }
 
@@ -236,29 +251,88 @@ public class AlternateDeckListActivity extends AppCompatActivity {
 
         //Delete Deck
         if (id == R.id.action_delete) {
-            DecksDbHelper mDbHelper = new DecksDbHelper(this);
-            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            if(folderName != null && !TextUtils.isEmpty(folderName)){
 
-            String selection = DecksContract.DecksEntry._ID + "=?";
-            String selectionArgs[] = new String[]{String.valueOf(deckId)};
+                //Remove the folder from the deck
+                String selection = DecksContract.DecksEntry._ID + "=?";
+                String[] selectionArgs = new String[]{String.valueOf(deckId)};
 
-            deletedDeckString = getAnnotatedDeckString(deckCode);
+                SQLiteDatabase readDatabase = mDbHelper.getReadableDatabase();
 
-            int r = db.delete(
-                    DecksContract.DecksEntry.TABLE_NAME,
-                    selection,
-                    selectionArgs
-            );
+                Cursor c = readDatabase.query(
+                        DecksContract.DecksEntry.TABLE_NAME,
+                        null,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        null
+                );
+                c.moveToFirst();
 
-            Log.e("Deleted: ", String.valueOf(r));
+                String folderNamesString = c.getString(c.getColumnIndex(DecksContract.DecksEntry.FOLDER_NAME));
+                c.close(); readDatabase.close();
+                ArrayList<String> foldersList = new ArrayList<>();
+                foldersList.addAll(Arrays.asList(folderNamesString.split("`")));
 
-            db.close();
+                if(foldersList.contains(folderName)){
+                    foldersList.remove(folderName);
+                }
 
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra("deletedDeckString", deletedDeckString);
-            setResult(Activity.RESULT_OK, returnIntent);
+                StringBuilder newFolderStringBuilder = new StringBuilder();
+                String newFolderString = null;
+                for(int i=0; i<foldersList.size(); i++){
+                    newFolderStringBuilder.append(foldersList.get(i));
+                    newFolderStringBuilder.append("`");
+                }
+                if(foldersList.size() > 0){
+                    newFolderString = newFolderStringBuilder.toString();
+                }
 
-            finish();
+                //Update the database
+                SQLiteDatabase writeDatabase = mDbHelper.getWritableDatabase();
+
+                ContentValues cv = new ContentValues();
+                cv.put(DecksContract.DecksEntry.FOLDER_NAME, newFolderString);
+                writeDatabase.update(
+                        DecksContract.DecksEntry.TABLE_NAME,
+                        cv,
+                        selection,
+                        selectionArgs
+                );
+                writeDatabase.close();
+
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("deletedDeckString", "returningFromFolder");
+                setResult(Activity.RESULT_OK, returnIntent);
+
+                finish();
+
+            }
+            else {
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+                String selection = DecksContract.DecksEntry._ID + "=?";
+                String selectionArgs[] = new String[]{String.valueOf(deckId)};
+
+                deletedDeckString = getAnnotatedDeckString(deckCode);
+
+                int r = db.delete(
+                        DecksContract.DecksEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+
+                Log.e("Deleted: ", String.valueOf(r));
+
+                db.close();
+
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("deletedDeckString", deletedDeckString);
+                setResult(Activity.RESULT_OK, returnIntent);
+
+                finish();
+            }
         } else if (id == R.id.action_copy) {
 
             try {
@@ -288,6 +362,9 @@ public class AlternateDeckListActivity extends AppCompatActivity {
             i.putExtra("deckString", deckCode);
             i.putExtra("deckName", deckName);
             i.putExtra("playableClass", playableClass);
+            if(folderName != null && !TextUtils.isEmpty(folderName)){
+                i.putExtra("folderName", folderName);
+            }
             startActivity(i);
             finish();
         } else if (id == R.id.action_favorites) {
