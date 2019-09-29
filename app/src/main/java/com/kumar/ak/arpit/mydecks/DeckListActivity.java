@@ -62,6 +62,8 @@ public class DeckListActivity extends AppCompatActivity {
 
     String deletedDeckString;
 
+    TextView toolbarTitle;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -112,7 +114,7 @@ public class DeckListActivity extends AppCompatActivity {
         }
 
         toolbar.setTitle("");
-        final TextView toolbarTitle = findViewById(R.id.deck_list_title);
+        toolbarTitle = findViewById(R.id.deck_list_title);
         toolbarTitle.setText(deckName);
         setSupportActionBar(toolbar);
 
@@ -428,6 +430,44 @@ public class DeckListActivity extends AppCompatActivity {
                     removeFromFavorites();
                     Toast.makeText(this, getString(R.string.removed_from_favorites), Toast.LENGTH_SHORT).show();
             }
+        }
+        else if(id == R.id.action_edit_deck_name){
+            final View v = DeckListActivity.this.getLayoutInflater().inflate(R.layout.edit_deck_name_dialog, null);
+
+            final EditText editText = v.findViewById(R.id.folder_name);
+            editText.setText(deckName);
+            editText.setSelection(0, editText.getText().toString().length());
+
+            editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    editText.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            InputMethodManager imm = (InputMethodManager) DeckListActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+                        }
+                    });
+                }
+            });
+            editText.requestFocus();
+
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(DeckListActivity.this);
+            builder.setView(v);
+            builder.setPositiveButton(getString(R.string.dialog_confirm), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    String newDeckName = editText.getText().toString();
+                    updateName(newDeckName);  //Updates the deck name in the database
+                    toolbarTitle.setText(newDeckName);
+                }
+            });
+            builder.setNegativeButton(getString(R.string.dialog_cancel), null);
+            builder.setCancelable(false);
+
+            builder.create();
+            builder.show();
         }
         return super.onOptionsItemSelected(item);
     }

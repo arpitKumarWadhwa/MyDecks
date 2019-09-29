@@ -29,4 +29,9 @@
         android:orderInCategory="103"
         android:title="@string/action_add_to_favorites"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_edit_deck_name"
+        android:orderInCategory="104"
+        android:title="@string/action_edit_deck_name"
+        app:showAsAction="never"/>
 </menu>
