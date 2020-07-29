@@ -125,7 +125,8 @@ public class DeckListActivity extends AppCompatActivity {
                 final View v = DeckListActivity.this.getLayoutInflater().inflate(R.layout.edit_deck_name_dialog, null);
 
                 final EditText editText = v.findViewById(R.id.folder_name);
-                editText.setText(deckName);
+                final String formattedDeckName = deckName.replaceAll("\n", "");
+                editText.setText(formattedDeckName);
                 editText.setSelection(0, editText.getText().toString().length());
 
                 editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -150,7 +151,21 @@ public class DeckListActivity extends AppCompatActivity {
 
                         String newDeckName = editText.getText().toString();
                         updateName(newDeckName);  //Updates the deck name in the database
-                        toolbarTitle.setText(newDeckName);
+
+                        String formattedNewDeckname = newDeckName;
+
+                        if(formattedNewDeckname.length() > 50){
+                            formattedNewDeckname = formattedNewDeckname.substring(0,50);
+                            formattedNewDeckname += "...";
+                        }
+                        String tempName = formattedNewDeckname;
+                        if(tempName.length() > 25){
+                            formattedNewDeckname = tempName.substring(0,26);
+                            formattedNewDeckname += "\n";
+                            formattedNewDeckname += tempName.substring(26);
+                        }
+
+                        toolbarTitle.setText(formattedNewDeckname);
                     }
                 });
                 builder.setNegativeButton(getString(R.string.dialog_cancel), null);
@@ -435,7 +450,8 @@ public class DeckListActivity extends AppCompatActivity {
             final View v = DeckListActivity.this.getLayoutInflater().inflate(R.layout.edit_deck_name_dialog, null);
 
             final EditText editText = v.findViewById(R.id.folder_name);
-            editText.setText(deckName);
+            String formattedDeckName = deckName.replaceAll("\n", "");
+            editText.setText(formattedDeckName);
             editText.setSelection(0, editText.getText().toString().length());
 
             editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -460,7 +476,21 @@ public class DeckListActivity extends AppCompatActivity {
 
                     String newDeckName = editText.getText().toString();
                     updateName(newDeckName);  //Updates the deck name in the database
-                    toolbarTitle.setText(newDeckName);
+
+                    String formattedNewDeckname = newDeckName;
+
+                    if(formattedNewDeckname.length() > 50){
+                        formattedNewDeckname = formattedNewDeckname.substring(0,50);
+                        formattedNewDeckname += "...";
+                    }
+                    String tempName = formattedNewDeckname;
+                    if(tempName.length() > 25){
+                        formattedNewDeckname = tempName.substring(0,26);
+                        formattedNewDeckname += "\n";
+                        formattedNewDeckname += tempName.substring(26);
+                    }
+
+                    toolbarTitle.setText(formattedNewDeckname);
                 }
             });
             builder.setNegativeButton(getString(R.string.dialog_cancel), null);
@@ -563,6 +593,7 @@ public class DeckListActivity extends AppCompatActivity {
         StringBuilder builder = new StringBuilder();
         DeckDecoder dd = new DeckDecoder();
         String deckName = dlm.getDeckName();
+        deckName = deckName.replaceAll("\n", "");
         String playableClass = dd.getPlayableClass(this, locale, deckString);
         String format = dd.getFormat(deckString);
 
@@ -671,6 +702,10 @@ public class DeckListActivity extends AppCompatActivity {
             case DecksContract.DecksEntry.CLASS_PALADIN:
                 toolbar.setBackgroundColor(getColor(R.color.paladin));
                 getWindow().setStatusBarColor(getColor(R.color.paladinDark));
+                break;
+            case DecksContract.DecksEntry.CLASS_DEMON_HUNTER:
+                toolbar.setBackgroundColor(getColor(R.color.demonHunter));
+                getWindow().setStatusBarColor(getColor(R.color.darkDemonHunter));
         }
     }
 

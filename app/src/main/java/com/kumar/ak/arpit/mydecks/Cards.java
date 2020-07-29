@@ -36,6 +36,7 @@ public class Cards {
     public static final int CARD_CLASS_PRIEST = 7;
     public static final int CARD_CLASS_WARLOCK = 8;
     public static final int CARD_CLASS_NEUTRAL = 9;
+    public static final int CARD_CLASS_DEMON_HUNTER = 10;
 
     public final static int LOCALE_EN_US = 0;
     public final static int LOCALE_KO_KR = 1;

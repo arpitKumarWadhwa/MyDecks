@@ -30,4 +30,6 @@
     <color name="mageDark">#b3b6ff</color>
     <color name="druid">#ae601f</color>
     <color name="druidDark">#894517</color>
+    <color name="demonHunter">#456842 </color>
+    <color name="darkDemonHunter">#1f3e32</color>
 </resources>

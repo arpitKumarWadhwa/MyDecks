@@ -2,6 +2,7 @@ package com.kumar.ak.arpit.mydecks;
 
 import android.content.Context;
 import android.util.Base64;
+import android.util.Log;
 
 import com.kumar.ak.arpit.mydecks.data.DecksContract;
 
@@ -193,6 +194,8 @@ public class DeckDecoder {
             case 41887:*/
                 case DecksContract.DecksEntry.CARD_CLASS_PRIEST:
                 return DecksContract.DecksEntry.CLASS_PRIEST;
+            case DecksContract.DecksEntry.CARD_CLASS_DEMON_HUNTER:
+                return DecksContract.DecksEntry.CLASS_DEMON_HUNTER;
             default:
                 return DecksContract.DecksEntry.CLASS_UNKNOWN;
         }

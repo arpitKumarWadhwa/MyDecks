@@ -470,7 +470,9 @@ public class DeckBoxActivity extends AppCompatActivity {
             final View v = this.getLayoutInflater().inflate(R.layout.edit_deck_name_dialog, null);
 
             final EditText editText = v.findViewById(R.id.folder_name);
-            editText.setText(adapter.getItem(position).getDeckName());
+            String deckName = adapter.getItem(position).getDeckName();
+            deckName = deckName.replaceAll("\n", "");
+            editText.setText(deckName);
             editText.setSelection(0, editText.getText().toString().length());
 
             editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -938,7 +940,21 @@ public class DeckBoxActivity extends AppCompatActivity {
         DeckListManager deck = new DeckListManager(deckString);
         deck.setPlayableClass(playableClass);
         deck.setFormat(format);
-        deck.setDeckName(deckName);
+
+        String formattedDeckName = deckName;
+
+        if(formattedDeckName.length() > 50){
+            formattedDeckName = formattedDeckName.substring(0,50);
+            formattedDeckName += "...";
+        }
+        String tempName = formattedDeckName;
+        if(tempName.length() > 25){
+            formattedDeckName = tempName.substring(0,26);
+            formattedDeckName += "\n";
+            formattedDeckName += tempName.substring(26);
+        }
+
+        deck.setDeckName(formattedDeckName);
 
         ContentValues cv = new ContentValues();
         cv.put(DecksContract.DecksEntry.COLUMN_DECK_STRING, deckString);
@@ -1129,7 +1145,22 @@ public class DeckBoxActivity extends AppCompatActivity {
                 deck.setFormat(c.getString(c.getColumnIndex(DecksContract.DecksEntry.COLUMN_DECK_FORMAT)));
                 deck.setPlayableClass(c.getString(c.getColumnIndex(DecksContract.DecksEntry.COLUMN_DECK_CLASS)));
                 deck.setId(c.getInt(c.getColumnIndex(DecksContract.DecksEntry._ID)));
-                deck.setDeckName(c.getString(c.getColumnIndex(DecksContract.DecksEntry.COLUMN_DECK_NAME)));
+
+                String deckName = c.getString(c.getColumnIndex(DecksContract.DecksEntry.COLUMN_DECK_NAME));
+
+                if(deckName.length() > 50){
+                    deckName = deckName.substring(0,50);
+                    deckName += "...";
+                }
+                String tempName = deckName;
+                if(tempName.length() > 25){
+                    deckName = tempName.substring(0,26);
+                    deckName += "\n";
+                    deckName += tempName.substring(26);
+                }
+
+                deck.setDeckName(deckName);
+
                 int fav = c.getInt(c.getColumnIndex(DecksContract.DecksEntry.IS_FAVORITE));
 
                 switch (fav) {
@@ -1250,6 +1281,7 @@ public class DeckBoxActivity extends AppCompatActivity {
         StringBuilder builder = new StringBuilder();
         DeckDecoder dd = new DeckDecoder();
         String deckName = dlm.getDeckName();
+        deckName = deckName.replaceAll("\n", "");
         String playableClass = dd.getPlayableClass(this, locale, deckString);
         String format = dd.getFormat(deckString);
 

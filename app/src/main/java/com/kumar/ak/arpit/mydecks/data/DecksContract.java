@@ -226,6 +226,7 @@ public final class DecksContract {
         public static final String CLASS_WARLOCK = "Warlock";
         public static final String CLASS_MAGE = "Mage";
         public static final String CLASS_PRIEST = "Priest";
+        public static final String CLASS_DEMON_HUNTER = "Demon Hunter";
         public static final String CLASS_UNKNOWN = "Unknown Class";
 
         public static final int CARD_CLASS_INVALID = -1;
@@ -239,6 +240,7 @@ public final class DecksContract {
         public static final int CARD_CLASS_PRIEST = 7;
         public static final int CARD_CLASS_WARLOCK = 8;
         public final static int CARD_CLASS_NEUTRAL = 9;
+        public static final int CARD_CLASS_DEMON_HUNTER = 10;
 
     }
 

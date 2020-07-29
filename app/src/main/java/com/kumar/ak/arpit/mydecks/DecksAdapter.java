@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.kumar.ak.arpit.mydecks.data.DecksContract;
+
 import java.util.ArrayList;
 
 
@@ -39,32 +41,35 @@ public class DecksAdapter extends ArrayAdapter<DeckListManager> {
             int imageResource;
 
             switch (res.get(position).getPlayableClass()) {
-                case "Warrior":
+                case DecksContract.DecksEntry.CLASS_WARRIOR:
                     imageResource = R.drawable.warrior;
                     break;
-                case "Paladin":
+                case DecksContract.DecksEntry.CLASS_PALADIN:
                     imageResource = R.drawable.paladin;
                     break;
-                case "Hunter":
+                case DecksContract.DecksEntry.CLASS_HUNTER:
                     imageResource = R.drawable.hunter;
                     break;
-                case "Druid":
+                case DecksContract.DecksEntry.CLASS_DRUID:
                     imageResource = R.drawable.druid;
                     break;
-                case "Rogue":
+                case DecksContract.DecksEntry.CLASS_ROGUE:
                     imageResource = R.drawable.rogue;
                     break;
-                case "Shaman":
+                case DecksContract.DecksEntry.CLASS_SHAMAN:
                     imageResource = R.drawable.shaman;
                     break;
-                case "Priest":
+                case DecksContract.DecksEntry.CLASS_PRIEST:
                     imageResource = R.drawable.priest;
                     break;
-                case "Mage":
+                case DecksContract.DecksEntry.CLASS_MAGE:
                     imageResource = R.drawable.mage;
                     break;
-                case "Warlock":
+                case DecksContract.DecksEntry.CLASS_WARLOCK:
                     imageResource = R.drawable.warlock;
+                    break;
+                case DecksContract.DecksEntry.CLASS_DEMON_HUNTER:
+                    imageResource = R.drawable.demon_hunter;
                     break;
                 default:
                     imageResource = R.drawable.ic_launcher_background;
