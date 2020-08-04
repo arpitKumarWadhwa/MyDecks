@@ -10,8 +10,8 @@ android {
         applicationId "com.kumar.ak.arpit.mydecks"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 33
-        versionName "1.93"
+        versionCode 41
+        versionName "1.96.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
